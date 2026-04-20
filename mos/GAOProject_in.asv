@@ -1,0 +1,43 @@
+%     i=1;
+%     Area = [500 ,1000];
+%     while i<=length(Area)
+    
+    A1 = 1000;
+    A2 = A1;
+    y_feed1 = 0.904;
+    N = 200;
+    G1 = 80;
+    G2 = G1;
+    t_feed = 54.5;
+    S1 = 30;
+     %% Membrane first
+    f_first = 573.1397;
+    [f_resd , f_perm , P_resdN , Frac_py , Frac_pa , t_feed] = MembraneSolution(G1, S1, A1, f_first, 800, y_feed1, N, t_feed);
+    Membrane_Parameter1=[f_resd , f_perm , P_resdN , Frac_py , Frac_pa , t_feed];
+    
+    %% Output value of membrane1
+%     t_feed = Membrane_Parameter1(6);
+    
+    P_resd_out1 = Membrane_Parameter1(3);
+    f_resd_first = Membrane_Parameter1(1);
+    Frac_py1 = Membrane_Parameter1(4);
+    Frac_pa1 = Membrane_Parameter1(5);
+    f_perm_Sum1 = f_first - f_resd_first;
+   
+    %% Increase the pressure by hysys
+    [T_out, P_out, F_out, Frac1, Frac2]=Conpressure(t_feed, P_resd_out1, f_resd_first , Frac_py1, Frac_pa1); %% Increase the pressure
+    
+    %% Membrane second
+    [f_resd1 , f_perm1 , P_resdN1 , Frac_py1 , Frac_pa1 , t_feed]=MembraneSolution(80 ,30 ,A2 ,F_out ,P_out ,Frac1 ,200 ,T_out );
+    Membrane_Parameter2 = [f_resd1 , f_perm1 , P_resdN1 , Frac_py1 , Frac_pa1 , t_feed];
+    f_resd_second = Membrane_Parameter2(3);
+    f_perm_Sum2 = f_resd_first-f_resd_second;
+   
+    %% output to excel
+    Outputdata=[P_resd_out1, f_perm_Sum1 , Frac_py1, Membrane_Parameter2(2), Membrane_Parameter2(3), Membrane_Parameter2(4)];
+    
+    xlRange = ['D3:I3','D4:I4','D5:I5','D6:I6','D7:I7','D8:I8'];
+    xlswrite('C:\Users\chang\OneDrive\Documents\Graduate level documents\Master thesis\gnh use\Two stage Mem',Outputdata,'sheet1','D3:I3');
+%     i=i+1;
+%     end 
+   

@@ -1,0 +1,61 @@
+     clc
+     clear
+      Nstep              =  2;
+      Mem_Index          =  Nstep;
+      Mem_I              =  Nstep;
+      GPU_Mem            =  zeros(1,Mem_Index);
+      S_Mem              =  zeros(1,Mem_Index);
+      P_resd_out         =  zeros(1,Mem_Index);
+      Membrane_Parameter =  zeros(Mem_Index,8);
+      f_resd             =  zeros(1,Mem_Index);
+      FracP_py           =  zeros(1,Mem_Index);
+      FracP_pa           =  zeros(1,Mem_Index);
+      FracR_py           =  zeros(1,Mem_Index);
+      FracR_pa           =  zeros(1,Mem_Index);
+      f_perm             =  zeros(1,Mem_Index);
+     
+      f_perm_py          =  zeros(1,Mem_Index);
+      f_perm_pa          =  zeros(1,Mem_Index);
+      Outputdata         =  zeros(Mem_Index,7);     
+    
+      BaseArea           =  100;
+      
+      % Work_space1        =  zeros(span,11*Nstep+3);
+
+   %%   Original value
+      N                  = 2000; 
+      P_Memfeed          = 800;
+      F_feed             = 573.1397;
+      y_feed             = 0.904;
+
+      %% sheet 1:3 two step scheme / one type Mem   [9.6 , 16, 48 ,90];
+      % GPU_Mem(:)       = [9.6 , 16, 48, 90]; 
+      % S_Mem(:)         = [31  ,45];  
+      % Permeate         = [9.6 , 16, 48, 90];  
+      % Select           = [31 ,31 ,31  ,45]; 
+      Permeate         = [14 , 23, 32, 41, 90];  
+      Select           = [7 ,10 ,13  ,16, 45]; 
+      % for i_set = 1:3
+      i  = 1;
+      GPU_Mem(:)       = [ Permeate(5),Permeate(i)]; 
+      S_Mem(:)         = [ Select(5)    ,Select(i)]; 
+      % GPU_Mem(:)       = [120,120]; 
+      % S_Mem(:)         = [ 30,30]; 
+      read_i           =  i;
+      Aratio           =  1;
+      span             =  60 ;
+
+      work_space1      =  Parfor_CallFunctrion(Aratio,BaseArea,span,Nstep,GPU_Mem,S_Mem,P_Memfeed,y_feed ,F_feed);
+      % work_space1      =  ParforRatio_CallFunctrion(Aratio,BaseArea,span,Nstep,GPU_Mem,S_Mem,P_Memfeed,y_feed ,F_feed);
+    
+     interval             = span;
+     Index_mem            = 3 ;
+    %% from sheet 14 switch the scheme : ZIF    -8 set at back
+     path1 = 'C:\Users\chang\OneDrive\Documents\Graduate level documents\Master thesis\gnh use\Two step Mem 2.xlsx';
+     sheet_value1 = 21+i;
+     writematrix(work_space1, path1   ,'sheet',sheet_value1,'Range',['A' ,num2str(Index_mem),':'  ,alpha_quire(length(work_space1)),num2str(Index_mem+ interval)]);
+      % end     
+    
+
+
+
